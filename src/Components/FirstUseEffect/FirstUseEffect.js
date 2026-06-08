@@ -1,21 +1,21 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 
 
-
+// useRef and UeseEffect to get the previous state
 const FirstUseEffect = ()=>{
 
     const [name, setName]= useState('');
+    let prevName = useRef();
     useEffect(()=>{
-        if (name){
-          const timeout = setTimeout (()=>{
-            console.log("meow");
-          }, 2000);
-          return ()=>{
-            clearTimeout(timeout);
-          } 
-        }
+
+            prevName.current = name;
+            console.log("the current", name);
+
         
-    }, [name])
+    }, [name]);
+
+    const thePreviouse = prevName.current; 
+    console.log("the prev", thePreviouse);
 
     return (
       <>

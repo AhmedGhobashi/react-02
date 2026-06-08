@@ -3,6 +3,7 @@ import './App.css';
 import FirstUseEffect from './Components/FirstUseEffect/FirstUseEffect';
 import  {useEffect, useState} from 'react'; 
 import axios from 'axios';
+import DebouncingTechTwo from './Components/DebouncingTechTwo';
 
 function App() {
   const [term, setTerm] = useState ('');
@@ -24,12 +25,33 @@ function App() {
       console.log (respond.data.query.search);
       
     }  //search-by-axios closed
+
+
+    if (!result.length){
+      if (term) {
+        search();
+      }
+
+    }else{
+
       
-      if(term){
-      search();
+      const debounceSearch = setTimeout(() => {
+        if (term) {
+          search();
+        }
+      }, 1000);
+
+      return () => {
+        clearTimeout(debounceSearch);
+      };
+ 
+
     }
 
-  }, [term]); // useEffect closed
+
+
+
+  }, [term, result.length, ]); // useEffect closed
 
 
 
@@ -49,6 +71,8 @@ function App() {
   return (
     <div className="App">
       <FirstUseEffect />
+
+      <h1>without fixing debounce:</h1>
       <div className="container">
         <div className="row">
           <div className="col">
