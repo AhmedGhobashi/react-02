@@ -1,3 +1,11 @@
+# in this one, I focus more on UseEffect and LifeCycle of the component in reactjs
+
+
+
+
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
