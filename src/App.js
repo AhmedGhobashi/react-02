@@ -3,15 +3,32 @@ import './App.css';
 import FirstUseEffect from './Components/FirstUseEffect/FirstUseEffect';
 import  {useEffect, useState} from 'react'; 
 import axios from 'axios';
-import DebouncingTechTwo from './Components/DebouncingTechTwo';
+// import DebouncingTechTwo from './Components/DebouncingTechTwo';
+import usePrevState from './hooks/usePrevState';
 
 function App() {
-  const [term, setTerm] = useState ('');
+  const [term, setTerm] = useState("ReactJavascript");
+  const [debounceSearch, setDebounceSearch] = useState(term);
   const [result, setResult] = useState([]);
+  const prevTerm = usePrevState(term);
+ 
+  //   useEffect(()=>{
+  //     prevTermState.current = term;
+  //   })
 
-  useEffect(()=>{
-    const search =async ()=>{
+  // const prevTerm  = prevTermState.current;
+  // console.log (prevTerm);
 
+  useEffect(() => {
+    const timeOut = setTimeout(() => {
+      setDebounceSearch(term);
+    }, 1200);
+
+    return clearTimeout(timeOut);
+  }, [term]);
+
+  useEffect(() => {
+    const search = async () => {
       const respond = await axios.get("https://en.wikipedia.org/w/api.php", {
         params: {
           action: "query",
@@ -22,57 +39,80 @@ function App() {
         },
       });
       setResult(respond.data.query.search);
-      console.log (respond.data.query.search);
-      
-    }  //search-by-axios closed
+      console.log(respond.data.query.search);
+    }; //search-by-axios closed
 
-
-    if (!result.length){
+    if (!result.length) {
       if (term) {
         search();
       }
-
-    }else{
-
-      
-      const debounceSearch = setTimeout(() => {
+    } else if (term !== prevTerm) {
+      const debounce = setTimeout(() => {
         if (term) {
           search();
         }
-      }, 1000);
+      }, 1200);
 
       return () => {
-        clearTimeout(debounceSearch);
+        clearTimeout(debounce);
       };
- 
-
     }
+  }, [term, result.length, prevTerm]); // useEffect closed
 
 
 
+  //##################################################
 
-  }, [term, result.length, ]); // useEffect closed
+  // useEffect(() => {
+  //   const search = async () => {
+  //     const respond = await axios.get("https://en.wikipedia.org/w/api.php", {
+  //       params: {
+  //         action: "query",
+  //         list: "search",
+  //         origin: "*",
+  //         format: "json",
+  //         srsearch: term,
+  //       },
+  //     });
+  //     setResult(respond.data.query.search);
+  //     console.log(respond.data.query.search);
+  //   }; //search-by-axios closed
 
+  //   if (!result.length) {
+  //     if (term) {
+  //       search();
+  //     }
+  //   } else {
+  //     const debounceSearch = setTimeout(() => {
+  //       if (term) {
+  //         search();
+  //       }
+  //     }, 1000);
 
+  //     return () => {
+  //       clearTimeout(debounceSearch);
+  //     };
+  //   }
+  // }, [term, result.length]); // useEffect closed
 
-  const fetchingResult  = result.map ((el)=>{
+  //#################################
+
+  const fetchingResult = result.map((el) => {
     return (
       <tr key={el.pageid}>
         <th scope="row">1</th>
         <td>{el.title}</td>
-        <td> 
-          <span dangerouslySetInnerHTML={{'__html': el.snippet}} />
+        <td>
+          <span dangerouslySetInnerHTML={{ __html: el.snippet }} />
         </td>
       </tr>
     );
-     
   });
 
   return (
     <div className="App">
       <FirstUseEffect />
-
-      <h1>without fixing debounce:</h1>
+      <h1>useEffect with fixing debounce and also getting previous state:</h1>
       <div className="container">
         <div className="row">
           <div className="col">
@@ -84,10 +124,10 @@ function App() {
                 type="text"
                 className="form-control"
                 id="exampleFormControlInput1"
-                onChange = {(e)=>{
-                  setTerm (e.target.value)
+                onChange={(e) => {
+                  setTerm(e.target.value);
                 }}
-                value = {term}
+                value={term}
               />
             </div>
           </div>
@@ -103,9 +143,7 @@ function App() {
                   <th scope="col">Desc</th>
                 </tr>
               </thead>
-              <tbody>
-                {fetchingResult}
-              </tbody>
+              <tbody>{fetchingResult}</tbody>
             </table>
           </div>
         </div>

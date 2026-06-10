@@ -9,16 +9,18 @@ const FirstUseEffect = ()=>{
     useEffect(()=>{
 
             prevName.current = name;
-            console.log("the current", name);
+            console.log("the current name", name);
 
         
     }, [name]);
 
     const thePreviouse = prevName.current; 
-    console.log("the prev", thePreviouse);
+    console.log("the prev name", thePreviouse);
 
     return (
       <>
+
+      <h1>The First useEffect test</h1>
         <label htmlFor="name" style={{ marginRight: "5px" }}>
           Name
         </label>
